@@ -1,6 +1,6 @@
 """本地目录引用的比较更新及持久写入。"""
 from pathlib import Path
-import os, json, tempfile
+import os, json, tempfile, fcntl
 from contextlib import contextmanager
 from .objects import encode
 
@@ -15,13 +15,15 @@ class Catalog:
 
     @contextmanager
     def locked(self):
+        # 阻塞式 flock：进程内多线程与跨进程都互斥；进程退出由内核自动释放，
+        # 不会像 O_EXCL 锁文件那样残留导致后续操作永久失败。
         lock = self.root/'.refs.lock'
-        fd = os.open(lock, os.O_CREAT|os.O_EXCL|os.O_WRONLY, 0o600)
-        try:
-            yield
-        finally:
-            os.close(fd)
-            lock.unlink()
+        with open(lock, 'w') as stream:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
     def compare_update(self, name, expected, value):
         with self.locked():
