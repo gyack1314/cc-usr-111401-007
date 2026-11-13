@@ -1,0 +1,53 @@
+{
+  "initial": [
+    {
+      "row_id": "a",
+      "tool": "chat",
+      "occurred": 10
+    },
+    {
+      "row_id": "b",
+      "tool": "code",
+      "occurred": 20
+    },
+    {
+      "row_id": "c",
+      "tool": "chat",
+      "occurred": 30
+    }
+  ],
+  "commits": [
+    {
+      "sequence": 1,
+      "changes": [
+        {
+          "row_id": "b",
+          "before": {
+            "row_id": "b",
+            "tool": "code",
+            "occurred": 20
+          },
+          "after": {
+            "row_id": "b",
+            "tool": "chat",
+            "occurred": 15
+          }
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "changes": [
+        {
+          "row_id": "a",
+          "before": {
+            "row_id": "a",
+            "tool": "chat",
+            "occurred": 10
+          },
+          "after": null
+        }
+      ]
+    }
+  ]
+}
